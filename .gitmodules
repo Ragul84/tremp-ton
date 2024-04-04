@@ -1,0 +1,6 @@
+[submodule "path_to_submodule"] 
+  path = lib/my-submodule 
+  url = https://github.com/Ragul84/tremp-ton.git
+[submodule "lib/my-submodule"]
+	path = lib/my-submodule
+	url = https://github.com/Ragul84/tremp-ton.git
