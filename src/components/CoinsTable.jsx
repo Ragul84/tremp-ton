@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { FaRocket } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { Toaster, toast } from 'react-hot-toast'
 
