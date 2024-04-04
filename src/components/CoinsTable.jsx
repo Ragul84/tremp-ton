@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { FaRocket } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import { numberWithCommas } from './Banner/Carousel.js'
 import { Toaster, toast } from 'react-hot-toast'
-import { CoinList } from './config/api.js'
+
+export function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
 
 function CoinsTable() {
-  const [coins, setCoins] = useState([])
+  const [coins, setCoins] = useState('')
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -21,6 +23,8 @@ function CoinsTable() {
   const [website, setWebsite] = useState('')
   const [owner, setOwner] = useState('')
   const [number, setNumber] = useState('1')
+
+  
 
   const handleForm = async (e) => {
     e.preventDefault()
@@ -95,13 +99,11 @@ function CoinsTable() {
             <table className="table-auto w-full">
               <thead className="text-xs font-semibold uppercase text-gray-400 bg-black">
                 <tr>
-                  {['Coin', 'Price', 'Volume', 'Market Cap'].map(
-                    (head) => (
-                      <th key={head} className="py-3 px-2">
-                        {head}
-                      </th>
-                    )
-                  )}
+                  {['Coin', 'Price', 'Volume', 'Market Cap'].map((head) => (
+                    <th key={head} className="py-3 px-2">
+                      {head}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-gray-700">
@@ -138,8 +140,7 @@ function CoinsTable() {
                       <td className="py-3 px-2 text-right text-white">
                         ${numberWithCommas(coin.fdv_usd)}
                       </td>
-                      <td className="py-3 px-2 text-center">
-                      </td>
+                      <td className="py-3 px-2 text-center"></td>
                     </tr>
                   ))}
               </tbody>
@@ -163,7 +164,9 @@ function CoinsTable() {
           <hr></hr>
           <div className="m-3 p-3 mt-7 bg-gradient-to-r from-blue-500 to-purple-600">
             <tr className="mt-7">
-              <th className='text-2xl uppercase text-blue-400'>Submit Your Project:</th>
+              <th className="text-2xl uppercase text-blue-400">
+                Submit Your Project:
+              </th>
               <th></th>
             </tr>
             <form
