@@ -3,4 +3,7 @@
 	url = https://github.com/Ragul84/tremp-ton.git
 [submodule "lib/my-sub/lib/my-sub"]
 	path = lib/my-sub
-	url = https://github.com/Ragul84/tremp-ton.git    
+	url = https://github.com/Ragul84/tremp-ton.git      
+[submodule "lib/my-sub/lib/my-sub/.github"]
+	path = lib/my-sub
+	url = https://github.com/Ragul84/tremp-ton.git
