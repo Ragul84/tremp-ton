@@ -16,7 +16,7 @@ export function Counter() {
 
   return (
     <div className="Container">
-      <TonConnectButton />
+      <TonConnectButton className="bg-blue" />
 
       <Card>
         <FlexBoxCol>

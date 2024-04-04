@@ -8,6 +8,10 @@ import { Button, FlexBoxCol, FlexBoxRow } from "./components/styled/styled";
 import { useTonConnect } from "./hooks/useTonConnect";
 import { CHAIN } from "@tonconnect/protocol";
 import "@twa-dev/sdk";
+import Header from "./components/Header"
+import 'bootstrap/dist/css/bootstrap.min.css';
+import HomePage from "./components/Pages/HomePage";
+import { BrowserRouter } from "react-router-dom";
 
 const StyledApp = styled.div`
   background-color: #e8e8e8;
@@ -30,25 +34,19 @@ function App() {
   const { network } = useTonConnect();
 
   return (
-    <StyledApp>
+    <BrowserRouter>
+     <StyledApp>
       <AppContainer>
         <FlexBoxCol>
           <FlexBoxRow>
-            <TonConnectButton />
-            <Button>
-              {network
-                ? network === CHAIN.MAINNET
-                  ? "mainnet"
-                  : "testnet"
-                : "N/A"}
-            </Button>
+           
           </FlexBoxRow>
-          <Counter />
-          <TransferTon />
-          <Jetton />
+          <Header/>
+          <HomePage/>
         </FlexBoxCol>
       </AppContainer>
-    </StyledApp>
+    </StyledApp></BrowserRouter>
+   
   );
 }
 
