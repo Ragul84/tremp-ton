@@ -95,7 +95,7 @@ function CoinsTable() {
             <table className="table-auto w-full">
               <thead className="text-xs font-semibold uppercase text-gray-400 bg-black">
                 <tr>
-                  {['Coin', 'Price', 'Volume', 'Market Cap', 'Vote'].map(
+                  {['Coin', 'Price', 'Volume', 'Market Cap'].map(
                     (head) => (
                       <th key={head} className="py-3 px-2">
                         {head}
@@ -139,7 +139,6 @@ function CoinsTable() {
                         ${numberWithCommas(coin.fdv_usd)}
                       </td>
                       <td className="py-3 px-2 text-center">
-                        <FaRocket className="text-lg text-yellow-400 mx-auto" />
                       </td>
                     </tr>
                   ))}
