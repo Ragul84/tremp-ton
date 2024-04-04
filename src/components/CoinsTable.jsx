@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Toaster, toast } from 'react-hot-toast'
-
+import { FaRocket } from 'react-icons/fa'
 export function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-  }
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
 
 function CoinsTable() {
   const [coins, setCoins] = useState('')
@@ -22,8 +22,6 @@ function CoinsTable() {
   const [website, setWebsite] = useState('')
   const [owner, setOwner] = useState('')
   const [number, setNumber] = useState('1')
-
-  
 
   const handleForm = async (e) => {
     e.preventDefault()
@@ -77,7 +75,7 @@ function CoinsTable() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 bg-gray-800 rounded-lg shadow-md">
+    <div className="  px-4 py-8 bg-gray-800 rounded-lg shadow-md">
       <Toaster />
       <h1 className="text-3xl font-bold text-center text-white mb-6">
         Discover Potential, Carefully Vetted Tokens in TON Ecosystem
@@ -98,11 +96,13 @@ function CoinsTable() {
             <table className="table-auto w-full">
               <thead className="text-xs font-semibold uppercase text-gray-400 bg-black">
                 <tr>
-                  {['Coin', 'Price', 'Volume', 'Market Cap'].map((head) => (
-                    <th key={head} className="py-3 px-2">
-                      {head}
-                    </th>
-                  ))}
+                  {['Coin', 'Price', 'Volume', 'Market Cap', 'vote'].map(
+                    (head) => (
+                      <th key={head} className="py-3 px-2">
+                        {head}
+                      </th>
+                    )
+                  )}
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-gray-700">
@@ -139,7 +139,9 @@ function CoinsTable() {
                       <td className="py-3 px-2 text-right text-white">
                         ${numberWithCommas(coin.fdv_usd)}
                       </td>
-                      <td className="py-3 px-2 text-center"></td>
+                      <td className="py-3 px-2 text-center">
+                        <FaRocket className='text-white ms-2 cursor-pointer text-xl'/>
+                      </td>
                     </tr>
                   ))}
               </tbody>
@@ -161,11 +163,13 @@ function CoinsTable() {
             </button>
           </div>
           <hr></hr>
-          <div className="m-3 p-3 mt-7 bg-gradient-to-r from-blue-500 to-purple-600">
+          <h2 className="mt-2 text-xl uppercase text-cyan-50 font-bold">
+            {' '}
+            Submit Your Project:
+          </h2>
+          <div className="m-3 p-3 mt-7 rounded-lg bg-gray-600">
             <tr className="mt-7">
-              <th className="text-2xl uppercase text-blue-400">
-                Submit Your Project:
-              </th>
+              <th className="text-2xl uppercase text-blue-400"></th>
               <th></th>
             </tr>
             <form

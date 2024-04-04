@@ -34,7 +34,7 @@ function Carousel() {
   }, [])
 
   const settings = {
-    dots: true,
+    dots: false,
     infinite: true,
     speed: 500,
     slidesToShow: 1,
@@ -62,7 +62,7 @@ function Carousel() {
                 <div className="text-xl font-bold mb-2">{attributes.name}</div>
                 <div className="text-lg mb-1">
                   Base Token Price (USD): $
-                  {numberWithCommas(attributes.base_token_price_usd)}
+                  {parseFloat(attributes.base_token_price_usd).toFixed(4)}
                 </div>
                 <div className="text-lg">
                   Quote Token Price (USD): $

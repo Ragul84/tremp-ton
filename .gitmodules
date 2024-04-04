@@ -1,3 +1,3 @@
-[submodule "lib/my-submodule"]
-	path = lib/my-submodule
+[submodule "lib/my-sub"]
+	path = lib/my-sub
 	url = https://github.com/Ragul84/tremp-ton.git
