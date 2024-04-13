@@ -1,84 +1,91 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
-import { Toaster, toast } from 'react-hot-toast'
-import { FaRocket } from 'react-icons/fa'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { FaRocket } from 'react-icons/fa';
+import { useCounterContract } from '../hooks/useCounterContract';
+import useWindowSize from 'react-use/lib/useWindowSize';
+import toast, { Toaster } from 'react-hot-toast';
+
 export function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 function CoinsTable() {
-  const [coins, setCoins] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
-  const [page, setPage] = useState(1)
-  const navigate = useNavigate()
-  const [name, setName] = useState('')
-  const [symboll, setSymboll] = useState('')
-  const [contract, setContract] = useState('')
-  const [logo, setLogo] = useState('')
-  const [telegram, setTelegram] = useState('')
-  const [twitter, setTwitter] = useState('')
-  const [website, setWebsite] = useState('')
-  const [owner, setOwner] = useState('')
-  const [number, setNumber] = useState('1')
-
-  const handleForm = async (e) => {
-    e.preventDefault()
-    const response = await axios.post('http://localhost:3000/form', {
-      name,
-      symboll,
-      contract,
-      logo,
-      telegram,
-      twitter,
-      website,
-      owner,
-    })
-    if (response.status === 201) {
-      toast.success(
-        'Token Details Sent Successfully! Our Team Will Get In Touch With You'
-      )
-    } else {
-      toast.error('Token Details Sent Error, Try Again Later')
-    }
-  }
+  const [coins, setCoins] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [votes, setVotes] = useState(() => {
+    const savedVotes = JSON.parse(localStorage.getItem('votes'));
+    return savedVotes || {};
+  });
+  const navigate = useNavigate();
+  const { sendIncrement } = useCounterContract();
 
   useEffect(() => {
     const fetchCoins = async () => {
-      setLoading(true)
+      setLoading(true);
       try {
         const response = await axios.get(
-          'https://api.geckoterminal.com/api/v2/networks/ton/tokens/multi/EQATcUc69sGSCCMSadsVUKdGwM1BMKS-HKCWGPk60xZGgwsK%2CEQBZ_cafPyDr5KUTs0aNxh0ZTDhkpEZONmLJA2SNGlLm4Cko%2CEQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O%2CEQALAf58SiRriRr9CloeebCG8NrdYfYCCkjR5UMZqw_OkkwK%2CEQCJbp0kBpPwPoBG-U5C-cWfP_jnksvotGfArPF50Q9Qiv9h%2CEQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO%2CEQCbKMTmEAdSnzsK85LOpaDkDH3HjujEbTePMSeirvEaNq-U'
-        )
-        const coinsData = response.data.data.map((coin) => ({
+          'https://api.geckoterminal.com/api/v2/networks/ton/tokens/multi/EQBwHOvf3UrPPJB7jeDHaOT-2vP0QQlDoEDBsgfv5XF75J3j%2CEQBZ_cafPyDr5KUTs0aNxh0ZTDhkpEZONmLJA2SNGlLm4Cko%2CEQCFWfg1ELLRkNQ1VgxCEOYKqLqxAuNJTrUXFXgkag7D2ssH%2CEQBng_Ux8DLKeaLZ4kN4eec-U-SJ1fMtYvqQANtL0oxKRQh_%2CEQA2kCVNwVsil2EM2mB0SkXytxCqQjS4mttjDpnXmwG9T6bO%2CEQAX9J60va-0wIDMdqGLRMf7imJvG0Ytyi3Yxnq9y-nbNCq2%2CEQD36Lxp6p4FMzHQThWzvFNaqhbT8Qip4rMF1NYjCSgY6ksE%2CEQA6Q3dMgVEfXQ9tNBL2fMljEhI_azQ-R3vvPgjGOXwoF7kt%2CEQC47093oX5Xhb0xuk2lCr2RhS8rj-vul61u4W2UH5ORmG_O'
+        );
+        const coinsData = response.data.data.map(coin => ({
           id: coin.id,
           ...coin.attributes,
-        }))
-        setCoins(coinsData)
+        }));
+        setCoins(coinsData);
       } catch (error) {
-        console.error('Error fetching coins:', error)
+        console.error('Error fetching coins:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchCoins()
-  }, [])
+    fetchCoins();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('votes', JSON.stringify(votes));
+  }, [votes]);
+
+  const handleVote = (coinId) => {
+    const now = new Date();
+    const lastVoteTime = votes[coinId]?.timestamp ? new Date(votes[coinId].timestamp) : null;
+
+    if (!lastVoteTime || now - lastVoteTime >= 86400000) {
+      sendIncrement(coinId)
+        .then(() => {
+          setVotes(prevVotes => ({
+            ...prevVotes,
+            [coinId]: {
+              count: (prevVotes[coinId]?.count || 0) + 1,
+              timestamp: new Date().toISOString(), 
+            },
+          }));
+          toast.success('Vote registered successfully!');
+        })
+        .catch(error => {
+          console.error('Transaction failed:', error);
+          toast.error('Transaction failed. Please try again later.');
+        });
+    } else {
+      toast.error('You can only vote once per day.');
+    }
+  };
 
   const handleSearch = () => {
     return coins.filter(
-      (coin) =>
-        coin.name.toLowerCase().includes(search.toLowerCase()) ||
-        coin.symbol.toLowerCase().includes(search.toLowerCase())
-    )
-  }
+      (coin) => coin.name.toLowerCase().includes(search.toLowerCase()) ||
+                coin.symbol.toLowerCase().includes(search.toLowerCase())
+    );
+  };
 
   return (
-    <div className="  px-4 py-8 bg-gray-800 rounded-lg shadow-md">
+    <div className="px-4 py-8 bg-gray-800 rounded-lg shadow-md">
       <Toaster />
-      <h1 className="text-3xl font-bold text-center text-white mb-6">
-        Discover Potential, Carefully Vetted Tokens in TON Ecosystem
+      <h1 className="text-3xl font-bold text
+-center text-white mb-6">
+        Discover promising tokens vetted thoroughly on the TON ecosystem.
       </h1>
       <div className="flex justify-center mb-6">
         <input
@@ -92,17 +99,13 @@ function CoinsTable() {
         <div className="h-2 bg-blue-400 rounded-full animate-pulse"></div>
       ) : (
         <>
-          <div className="overflow-x-auto rounded-lg">
+          <div className="overflow-x-auto   rounded-lg">
             <table className="table-auto w-full">
               <thead className="text-xs font-semibold uppercase text-gray-400 bg-black">
-                <tr>
-                  {['Coin', 'Price', 'Volume', 'Market Cap', 'vote'].map(
-                    (head) => (
-                      <th key={head} className="py-3 px-2">
-                        {head}
-                      </th>
-                    )
-                  )}
+                <tr className='me-2' >
+                  {['Coin', 'Price', 'Volume', 'Market Cap', 'Vote', 'Votes'].map((head) => (
+                    <th key={head} className="py-3 me-2 px-2">{head}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-gray-700">
@@ -111,7 +114,7 @@ function CoinsTable() {
                   .map((coin) => (
                     <tr
                       key={coin.id}
-                      className="hover:bg-gray-600"
+                      className="hover:bg-gray-600 cursor-pointer"
                       onClick={() => navigate(`/coins/${coin.id}`)}
                     >
                       <td className="py-3 px-2">
@@ -122,7 +125,7 @@ function CoinsTable() {
                             className="w-8 h-8 rounded-full"
                           />
                           <span className="font-medium text-white">
-                            {coin.name} ({coin.symbol})
+                           {coin.symbol}
                           </span>
                         </div>
                       </td>
@@ -140,14 +143,23 @@ function CoinsTable() {
                         ${numberWithCommas(coin.fdv_usd)}
                       </td>
                       <td className="py-3 px-2 text-center">
-                        <FaRocket className='text-white ms-2 cursor-pointer text-xl'/>
+                        <FaRocket
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleVote(coin.id);
+                          }}
+                          className="text-white cursor-pointer text-xl"
+                        />
+                      </td>
+                      <td className="py-3 px-2 text-center text-white">
+                        {votes[coin.id]?.count || 0}
                       </td>
                     </tr>
                   ))}
               </tbody>
             </table>
           </div>
-          <div className="flex mb-4 justify-center space-x-4 mt-6">
+          <div className="flex justify-center space-x-4 mt-6">
             <button
               className="btn btn-primary"
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
@@ -162,162 +174,18 @@ function CoinsTable() {
               Next
             </button>
           </div>
-          <hr></hr>
-          <h2 className="mt-2 text-xl uppercase text-cyan-50 font-bold">
-            {' '}
-            Submit Your Project:
+          <h2 className="text-2xl mt-3 text-white font-bold">
+            Want To Get Your Project Listed?
           </h2>
-          <div className="m-3 p-3 mt-7 rounded-lg bg-gray-600">
-            <tr className="mt-7">
-              <th className="text-2xl uppercase text-blue-400"></th>
-              <th></th>
-            </tr>
-            <form
-              onSubmit={handleForm}
-              className=" max-w-4xl mx-auto shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-black">
-                {/* First Column */}
-                <div>
-                  <div className="mb-4">
-                    <label
-                      className="block text-sm font-bold mb-2"
-                      htmlFor="name"
-                    >
-                      Project Name
-                    </label>
-                    <input
-                      onChange={(e) => setName(e.target.value)}
-                      className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black leading-tight focus:outline-none focus:shadow-outline"
-                      id="name"
-                      type="text"
-                      placeholder="Project Name"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      className="block text-sm font-bold mb-2"
-                      htmlFor="symbol"
-                    >
-                      Symbol
-                    </label>
-                    <input
-                      onChange={(e) => setSymboll(e.target.value)}
-                      className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black leading-tight focus:outline-none focus:shadow-outline"
-                      id="symbol"
-                      type="text"
-                      placeholder="Symbol"
-                    />
-                    <label
-                      className="block text-sm font-bold mt-3"
-                      htmlFor="symbol"
-                    >
-                      Logo
-                    </label>
-                    <input
-                      onChange={(e) => setLogo(e.target.value)}
-                      className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black leading-tight focus:outline-none focus:shadow-outline"
-                      id="symbol"
-                      type="text"
-                      placeholder="Paste Your Logo URL"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      className="block text-sm font-bold mb-2"
-                      htmlFor="contract-address"
-                    >
-                      Contract Address
-                    </label>
-                    <input
-                      onChange={(e) => setContract(e.target.value)}
-                      className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black leading-tight focus:outline-none focus:shadow-outline"
-                      id="contract-address"
-                      type="text"
-                      placeholder="Contract Address"
-                    />
-                  </div>
-                </div>
-                {/* Second Column */}
-                <div>
-                  <div className="mb-4">
-                    <label
-                      className="block text-sm font-bold mb-2"
-                      htmlFor="telegram-link"
-                    >
-                      Telegram Link
-                    </label>
-                    <input
-                      onChange={(e) => setTelegram(e.target.value)}
-                      className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black leading-tight focus:outline-none focus:shadow-outline"
-                      id="telegram-link"
-                      type="text"
-                      placeholder="Telegram Link"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      className="block text-sm font-bold mb-2"
-                      htmlFor="twitter-link"
-                    >
-                      Twitter Link
-                    </label>
-                    <input
-                      onChange={(e) => setTwitter(e.target.value)}
-                      className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black leading-tight focus:outline-none focus:shadow-outline"
-                      id="twitter-link"
-                      type="text"
-                      placeholder="Twitter Link"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      className="block text-sm font-bold mb-2"
-                      htmlFor="website"
-                    >
-                      Website
-                    </label>
-                    <input
-                      onChange={(e) => setWebsite(e.target.value)}
-                      className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black leading-tight focus:outline-none focus:shadow-outline"
-                      id="website"
-                      type="text"
-                      placeholder="Website"
-                    />
-                  </div>
-                </div>
-              </div>
-              {/* Owner's Telegram ID */}
-              <div className="mb-4">
-                <label
-                  className="block text-sm font-bold mb-2"
-                  htmlFor="owners-telegram-id"
-                >
-                  Contact Details
-                </label>
-                <input
-                  onChange={(e) => setOwner(e.target.value)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-black leading-tight focus:outline-none focus:shadow-outline"
-                  id="owners-telegram-id"
-                  type="text"
-                  placeholder="Owner's Telegram ID"
-                />
-              </div>
-              {/* Submit Button */}
-              <div className="flex justify-center mt-6">
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  type="submit"
-                >
-                  Submit
-                </button>
-              </div>
-            </form>
-          </div>
+          <p className="text-gray-500 text-xs mt-2">
+            Get in touch with us, and once we've thoroughly researched your
+            project and are confident in its safety for users, it will be
+            listed.
+          </p>
         </>
       )}
     </div>
-  )
+  );
 }
 
-export default CoinsTable
+export default CoinsTable;

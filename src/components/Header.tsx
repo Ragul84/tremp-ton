@@ -15,12 +15,12 @@ function Header() {
         <Navbar.Brand
           style={{ fontFamily: 'Bruno Ace SC', marginLeft: '3px' }}
           href="#"
-          className="text-warning fs-2"
+          className="text-white fs-2"
           //   onClick={() => {
           //    navigate('/')
           // }}
         >
-          TonSpotlight
+          TonResistance
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">

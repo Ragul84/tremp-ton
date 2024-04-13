@@ -35,12 +35,14 @@ function App() {
 
   return (
     <BrowserRouter>
+
      <StyledApp>
       <AppContainer>
         <FlexBoxCol>
           <FlexBoxRow>
            
           </FlexBoxRow>
+          
           <Header/>
           <HomePage/>
         </FlexBoxCol>

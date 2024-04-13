@@ -44,7 +44,7 @@ function Carousel() {
   }
 
   return (
-    <div className="text-white ">
+    <div className="text-white carousel">
       <Toaster />
       {isLoading ? (
         <div>Loading...</div>
