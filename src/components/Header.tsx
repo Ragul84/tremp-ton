@@ -10,7 +10,7 @@ import { TonConnectButton } from '@tonconnect/ui-react'
 
 function Header() {
   return (
-    <Navbar expand="lg" className="bg-primary">
+    <Navbar expand="lg" className="bg-blue-700 header">
       <Container fluid>
         <Navbar.Brand
           style={{ fontFamily: 'Bruno Ace SC', marginLeft: '3px' }}
@@ -30,21 +30,21 @@ function Header() {
             navbarScroll
           >
             <Nav.Link
-              style={{ fontFamily: 'poppins', display: 'none' }}
-              href="#action1"
+              style={{ fontFamily: 'poppins' }}
+              className="text-white "
+              href="learn"
             >
-              Home
+              Learn To Earn
             </Nav.Link>
             <Nav.Link
-              style={{ fontFamily: 'poppins', display: 'none' }}
-              className="btn btn-primary"
+              style={{ fontFamily: 'poppins' }}
+              className="text-white"
               href="coins/:id"
             >
-              Coin Page
+              Profile
             </Nav.Link>
           </Nav>
           <TonConnectButton />
-
         </Navbar.Collapse>
       </Container>
     </Navbar>

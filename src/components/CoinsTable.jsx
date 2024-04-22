@@ -81,7 +81,7 @@ function CoinsTable() {
   };
 
   return (
-    <div className="px-4 py-8 bg-gray-800 rounded-lg shadow-md">
+    <div className="coinstable px-4 py-8 bg-gray-800 rounded-lg shadow-md">
       <Toaster />
       <h1 className="text-3xl font-bold text
 -center text-white mb-6">
@@ -100,15 +100,20 @@ function CoinsTable() {
       ) : (
         <>
           <div className="overflow-x-auto   rounded-lg">
-            <table className="table-auto w-full">
+            <table className="table-auto w-full"> 
               <thead className="text-xs font-semibold uppercase text-gray-400 bg-black">
                 <tr className='me-2' >
                   {['Coin', 'Price', 'Volume', 'Market Cap', 'Vote', 'Votes'].map((head) => (
                     <th key={head} className="py-3 me-2 px-2">{head}</th>
                   ))}
                 </tr>
-              </thead>
-              <tbody className="text-sm divide-y divide-gray-700">
+                </thead>
+             
+                
+              
+                  
+                <tbody className="text-sm divide-y divide-gray-700">\
+                 
                 {handleSearch()
                   .slice((page - 1) * 10, page * 10)
                   .map((coin) => (
